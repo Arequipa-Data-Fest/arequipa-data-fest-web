@@ -1,4 +1,3 @@
-
 ---
 name: Feature Request
 about: Create a new feature or component

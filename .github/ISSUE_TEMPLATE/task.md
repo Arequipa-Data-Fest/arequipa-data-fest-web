@@ -1,4 +1,3 @@
-
 ---
 name: Technical Task
 about: Technical or maintenance task
