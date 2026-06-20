@@ -87,7 +87,7 @@ featuredSpeakers:
   eyebrow: "Líderes de la industria"
   title: "Nuestro speakers"
   viewAllLabel: "Ver todos los ponentes"
-  viewAllHref: "/ponentes"
+  viewAllHref: "/speakers"
   speakerIds:
     - "s-001"
     - "s-002"

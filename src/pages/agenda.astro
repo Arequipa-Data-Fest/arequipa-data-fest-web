@@ -1,7 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
-import AgendaTimeline from '@components/agenda/timeline.astro';
-import MainLayout from '@layouts/main-layout.astro';
+import AgendaTimeline from '@components/features/agenda/Timeline.astro';
+import MainLayout from '@layouts/MainLayout.astro';
 
 const agendaEntry = await getEntry('agenda', 'home');
 if (!agendaEntry) {

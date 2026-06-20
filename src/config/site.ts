@@ -31,7 +31,7 @@ export const siteConfig = {
 
 export const navigationLinks = [
 	{ label: 'Inicio', href: '/' },
-	{ label: 'Ponencias', href: '/ponentes' },
+	{ label: 'Ponencias', href: '/speakers' },
 	{ label: 'Agenda', href: '/agenda' },
-	{ label: 'Certificado', href: '/certificado' },
+	{ label: 'Certificado', href: '/certificate' },
 ] as const;

@@ -1,7 +1,7 @@
 ---
 import { ArrowRight } from '@lucide/astro';
 import { getEntries } from 'astro:content';
-import SpeakerCardV1 from '@components/ui/speaker-card/v1.astro';
+import SpeakerCard from './SpeakerCard.astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -31,7 +31,18 @@ const speakers = await getEntries(speakersRefs);
 		<ul class="featured-speakers__list">
 			{speakers.map((speaker, index) => (
 				<li>
-					<SpeakerCardV1 speaker={speaker.data} accent={index % 2 === 0 ? 'primary' : 'accent'} />
+					<SpeakerCard
+						variant="compact"
+						name={speaker.data.name}
+						role={speaker.data.role}
+						company={speaker.data.company}
+						imageFilename={speaker.data.imageFilename}
+						imageAlt={speaker.data.imageAlt}
+						imageWidth={speaker.data.imageWidth}
+						imageHeight={speaker.data.imageHeight}
+						tags={speaker.data.tags}
+						accent={index % 2 === 0 ? 'primary' : 'accent'}
+					/>
 				</li>
 			))}
 		</ul>

@@ -1,10 +1,10 @@
 ---
 import { getEntry } from 'astro:content';
-import MainLayout from '@layouts/main-layout.astro';
-import CertificateHero from '@components/certificate/hero.astro';
-import CertificatePreview from '@components/certificate/preview.astro';
-import CertificateDownload from '@components/certificate/download.astro';
-import InstitutionalBacking from '@components/certificate/institutional-backing.astro';
+import MainLayout from '@layouts/MainLayout.astro';
+import CertificateHero from '@components/features/certificate/Hero.astro';
+import CertificatePreview from '@components/features/certificate/Preview.astro';
+import CertificateDownload from '@components/features/certificate/Download.astro';
+import InstitutionalBacking from '@components/features/certificate/InstitutionalBacking.astro';
 
 const certificateEntry = await getEntry('certificate', 'home');
 if (!certificateEntry) {
