@@ -15,7 +15,7 @@ const Icon = icon === 'coffee' ? Coffee : icon === 'lunch' ? Utensils : null;
 ---
 
 <article class:list={['agenda-item', `agenda-item--${type}`]}>
-	<div class="agenda-item__time">{time}</div>
+	<time class="agenda-item__time">{time}</time>
 	<div class="agenda-item__content">
 		{type === 'break' ? (
 			<div class="agenda-item__break">
