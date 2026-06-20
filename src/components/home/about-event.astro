@@ -1,0 +1,138 @@
+---
+import { landingData } from '../../data/landing';
+
+const { aboutEvent } = landingData;
+---
+
+<section class="about-event" aria-labelledby="about-event-title">
+	<h2 id="about-event-title">{aboutEvent.title}</h2>
+
+	<div class="about-event__content">
+		<div class="about-event__media" aria-hidden="true"></div>
+
+		<div class="about-event__info">
+			<div class="about-event__text">
+				{aboutEvent.description.map((line) => (
+					<p>{line}</p>
+				))}
+			</div>
+
+			<div class="about-event__logos">
+				<div>
+					<h3>{aboutEvent.organizersLabel}</h3>
+					<div class="about-event__logo-row">
+						{aboutEvent.organizers.map((item) => (
+							<img src={item.logoUrl} alt={item.alt} loading="lazy" />
+						))}
+					</div>
+				</div>
+
+				<div>
+					<h3>{aboutEvent.collaboratorLabel}</h3>
+					<div class="about-event__logo-row about-event__logo-row--single">
+						{aboutEvent.collaborators.map((item) => (
+							<img src={item.logoUrl} alt={item.alt} loading="lazy" />
+						))}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.about-event {
+		background: var(--df-page);
+		padding: 3rem 3.5rem 4rem;
+	}
+
+	.about-event h2 {
+		margin: 0 0 3rem;
+		color: var(--df-accent-soft);
+		font-size: clamp(2rem, 4vw, 3.5rem);
+		font-weight: 800;
+		letter-spacing: 0.35em;
+		text-align: center;
+		text-transform: uppercase;
+	}
+
+	.about-event__content {
+		display: grid;
+		grid-template-columns: 0.9fr 1.25fr;
+		align-items: center;
+		gap: 3rem;
+		max-width: 66rem;
+		margin-inline: auto;
+	}
+
+	.about-event__media {
+		min-height: 26rem;
+		border: 2px solid var(--df-text);
+		border-radius: 0.3rem;
+	}
+
+	.about-event__info {
+		display: grid;
+		gap: 1.5rem;
+	}
+
+	.about-event__text {
+		border: 1px solid var(--df-line);
+		border-radius: 0.4rem;
+		background: var(--df-card);
+		padding: 2rem;
+	}
+
+	.about-event__text p {
+		margin: 0;
+		color: var(--df-text);
+		font-size: var(--df-text-body);
+		line-height: 1.35;
+	}
+
+	.about-event__logos {
+		display: grid;
+		grid-template-columns: 1.3fr 0.7fr;
+		align-items: start;
+		gap: 2rem;
+	}
+
+	.about-event h3 {
+		margin: 0 0 1rem;
+		color: var(--df-text-muted);
+		font-size: clamp(1.2rem, 2vw, 1.6rem);
+		font-weight: 800;
+	}
+
+	.about-event__logo-row {
+		display: flex;
+		align-items: center;
+		gap: 1.2rem;
+	}
+
+	.about-event__logo-row img {
+		max-height: 5.5rem;
+		max-width: 15rem;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+	}
+
+	.about-event__logo-row--single {
+		justify-content: center;
+	}
+
+	@media (max-width: 900px) {
+		.about-event {
+			padding-inline: 1.25rem;
+		}
+
+		.about-event__content {
+			grid-template-columns: 1fr;
+		}
+
+		.about-event__logos {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
