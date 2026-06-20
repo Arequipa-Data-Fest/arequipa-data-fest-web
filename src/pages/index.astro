@@ -7,7 +7,7 @@ import FeaturedSpeakers from "@components/home/featured-speakers.astro";
 import Hero from "@components/home/hero.astro";
 import MainTopics from "@components/home/main-topics.astro";
 import Countdown from "@components/home/countdown.astro";
-import { siteConfig } from "@data/site";
+import { siteConfig } from "@config/site";
 
 const landingEntry = await getEntry("landing", "home");
 if (!landingEntry) {
