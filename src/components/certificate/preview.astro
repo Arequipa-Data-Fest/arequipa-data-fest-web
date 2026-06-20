@@ -1,12 +1,18 @@
 ---
 import { BadgeCheck, Share2 } from '@lucide/astro';
-interface Props { data: { imageUrl: string; imageAlt: string; imageWidth: number; imageHeight: number; validationLabel: string; idLabel: string; idValue: string; shareLabel: string; shareTitle: string; shareText: string; }; }
+import { getImagePath } from '@config/assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	data: CollectionEntry<'certificate'>['data']['preview'];
+}
+
 const { data } = Astro.props;
 ---
 
 <section class="certificate-preview" aria-label={data.validationLabel} data-certificate-preview data-share-title={data.shareTitle} data-share-text={data.shareText}>
 	<div class="certificate-preview__content">
-		<img class="certificate-preview__image" src={data.imageUrl} alt={data.imageAlt} width={data.imageWidth} height={data.imageHeight} loading="lazy" decoding="async" />
+		<img class="certificate-preview__image" src={getImagePath(data.imageFilename)} alt={data.imageAlt} width={data.imageWidth} height={data.imageHeight} loading="lazy" decoding="async" />
 		<div class="certificate-preview__footer">
 			<div class="certificate-preview__info"><div class="certificate-preview__icon" aria-hidden="true"><BadgeCheck /></div><div><p>{data.validationLabel}</p><span>{data.idLabel} {data.idValue}</span></div></div>
 			<button class="certificate-preview__share" type="button" data-share-button aria-label={`${data.shareLabel}: ${data.shareTitle}`}><Share2 aria-hidden="true" />{data.shareLabel}</button>
