@@ -1,0 +1,83 @@
+---
+import { navigationLinks, siteConfig } from '../data/site';
+
+const registrationHref = siteConfig.registrationUrl || '#registro';
+const isExternalRegistration = siteConfig.registrationUrl.startsWith('http');
+const currentPath = Astro.url.pathname;
+---
+
+<header class="relative z-50 bg-navigation/95 shadow-[0_8px_24px_rgb(0_0_0_/_20%)] backdrop-blur-md">
+	<a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+	<div class="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-6 px-5 py-3 sm:px-8 lg:min-h-32 lg:px-14 lg:py-4">
+		<a class="shrink-0" href="/" aria-label="Ir al inicio de Arequipa Data Fest 2026">
+			<img
+				src={siteConfig.logoUrl}
+				alt="Arequipa Data Fest 2026"
+				width="449"
+				height="129"
+				class="h-auto w-40 sm:w-52 lg:w-[23rem]"
+				fetchpriority="high"
+			/>
+		</a>
+
+		<nav class="hidden items-center gap-6 lg:flex" aria-label="Navegación principal">
+			{navigationLinks.map((link) => {
+				const isActive = currentPath === link.href;
+
+				return (
+				<a
+					href={link.href}
+					aria-current={isActive ? 'page' : undefined}
+					class:list={[
+						'border-b-2 pb-1 text-xl font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-accent',
+						isActive
+							? 'border-accent-soft text-accent-soft'
+							: 'border-transparent text-text hover:border-accent hover:text-accent',
+					]}
+				>
+					{link.label}
+				</a>
+				);
+			})}
+		</nav>
+
+		<a
+			href={registrationHref}
+			target={isExternalRegistration ? '_blank' : undefined}
+			rel={isExternalRegistration ? 'noopener noreferrer' : undefined}
+			class="hidden bg-primary px-7 py-4 text-xl font-semibold tracking-wide text-white shadow-glow transition hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent lg:inline-flex"
+		>
+			Inscríbete
+		</a>
+
+		<details class="group relative lg:hidden">
+			<summary class="flex size-11 cursor-pointer list-none items-center justify-center border border-accent/50 text-accent marker:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+				<span class="sr-only">Abrir menú de navegación</span>
+				<svg aria-hidden="true" viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M4 7h16M4 12h16M4 17h16" />
+				</svg>
+			</summary>
+
+			<nav class="absolute right-0 top-[calc(100%+0.75rem)] w-72 border border-white/10 bg-navigation p-4 shadow-2xl" aria-label="Navegación móvil">
+				<ul class="space-y-1">
+					{navigationLinks.map((link) => (
+						<li>
+							<a aria-current={currentPath === link.href ? 'page' : undefined} class="block px-3 py-3 font-semibold text-text transition hover:bg-white/5 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" href={link.href}>
+								{link.label}
+							</a>
+						</li>
+					))}
+				</ul>
+				<a
+					href={registrationHref}
+					target={isExternalRegistration ? '_blank' : undefined}
+					rel={isExternalRegistration ? 'noopener noreferrer' : undefined}
+					class="mt-4 flex justify-center bg-primary px-5 py-3 font-semibold text-white shadow-glow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+				>
+					Inscríbete
+				</a>
+			</nav>
+		</details>
+	</div>
+</header>
