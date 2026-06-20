@@ -66,17 +66,18 @@ const { footer, logo } = siteConfig;
   .footer-content {
     position: relative;
     min-height: 28rem;
-    padding: 4rem 4rem 2rem;
+    padding: 4rem clamp(1.25rem, 5vw, 4rem) 2rem;
   }
   .footer-info {
     position: relative;
     z-index: 2;
     max-width: none;
-    width: 60%;
+    width: min(60%, 48rem);
+    min-width: 0;
   }
   .footer-info h2 {
     margin: 0;
-    color: var(--df-text-muted);
+    color: var(--df-on-primary);
     font-size: clamp(2rem, 4vw, 4rem);
     font-weight: 800;
     line-height: 1.15;
@@ -100,6 +101,8 @@ const { footer, logo } = siteConfig;
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 0.03em;
+		max-inline-size: 100%;
+		text-align: center;
   }
   .footer-button--primary {
     background: var(--df-primary);
@@ -154,6 +157,9 @@ const { footer, logo } = siteConfig;
     .footer-actions {
       flex-direction: column;
       align-items: flex-start;
+    }
+    .footer-info {
+      width: 100%;
     }
     .footer-button {
       width: 100%;
