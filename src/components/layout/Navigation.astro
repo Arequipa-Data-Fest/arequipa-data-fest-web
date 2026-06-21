@@ -1,5 +1,5 @@
 ---
-import { CldImage } from "astro-cloudinary";
+import { getImagePath } from "@config/assets";
 import { navigationLinks, siteConfig } from "@config/site";
 import { ArrowRight } from "@lucide/astro";
 
@@ -14,9 +14,13 @@ const { logo, navigation } = siteConfig;
 
   <div class="nav-container">
     <a class="nav-logo" href="/" aria-label={logo.alt}>
-      <CldImage
+      <img
         class="nav-logo-img"
-        src={siteConfig.logoPublicId}
+        src={getImagePath(siteConfig.logoPublicId, {
+          width: 449,
+          height: 129,
+          crop: "fit",
+        })}
         alt={logo.alt}
         width={449}
         height={129}
@@ -99,6 +103,11 @@ const { logo, navigation } = siteConfig;
 </header>
 
 <script>
+  const win = window as Window & {
+    __dfNavBound?: boolean;
+    __dfNavUpdate?: () => void;
+  };
+
   const navigation = document.querySelector<HTMLElement>("[data-navigation]");
 
   if (navigation) {
@@ -106,8 +115,16 @@ const { logo, navigation } = siteConfig;
       navigation.classList.toggle("nav-shell--scrolled", window.scrollY > 8);
     };
 
+    win.__dfNavUpdate = updateNavigation;
     updateNavigation();
-    window.addEventListener("scroll", updateNavigation, { passive: true });
+
+    if (!win.__dfNavBound) {
+      window.addEventListener("scroll", updateNavigation, { passive: true });
+      document.addEventListener("astro:page-load", () => {
+        win.__dfNavUpdate?.();
+      });
+      win.__dfNavBound = true;
+    }
   }
 </script>
 
@@ -142,9 +159,9 @@ const { logo, navigation } = siteConfig;
     min-height: 4.75rem;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 0.75rem;
 		min-width: 0;
-    padding: 0.7rem 1.25rem;
+    padding: 0.75rem var(--df-section-x);
   }
 
   .nav-logo {
@@ -153,9 +170,9 @@ const { logo, navigation } = siteConfig;
 
   .nav-logo-img {
     display: block;
-    width: clamp(10.75rem, 36vw, 13rem) !important;
+    width: clamp(8.5rem, 34vw, 10rem);
+    height: auto;
     max-width: none !important;
-    height: auto !important;
     max-height: none !important;
     aspect-ratio: auto !important;
     object-fit: contain !important;
@@ -171,7 +188,7 @@ const { logo, navigation } = siteConfig;
     border-bottom: 2px solid transparent;
     padding-bottom: 0.25rem;
     color: var(--df-on-primary);
-    font-size: 1.05rem;
+    font-size: 1.125rem;
     font-weight: 600;
     text-decoration: none;
     transition:
@@ -186,15 +203,19 @@ const { logo, navigation } = siteConfig;
   }
 
   .nav-cta {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--df-touch-target);
     background: var(--df-primary);
     color: var(--df-on-primary);
     box-shadow: 0 0 10px var(--df-primary);
-    font-size: 1.05rem;
+    font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.125rem);
     font-weight: 700;
     letter-spacing: 0;
 		max-inline-size: 100%;
+		white-space: nowrap;
 		text-align: center;
     text-decoration: none;
     transition: background 150ms ease;
@@ -205,7 +226,7 @@ const { logo, navigation } = siteConfig;
   }
 
   .nav-cta--desktop {
-    padding: 0.9rem 1.45rem;
+    padding: 0.85rem 1.25rem;
   }
 
   .nav-cta__icon {
@@ -220,8 +241,8 @@ const { logo, navigation } = siteConfig;
 
   .nav-menu-toggle {
     display: flex;
-    width: 2.75rem;
-    height: 2.75rem;
+    width: var(--df-touch-target);
+    height: var(--df-touch-target);
     cursor: pointer;
     list-style: none;
     align-items: center;
@@ -243,7 +264,7 @@ const { logo, navigation } = siteConfig;
     position: absolute;
     right: 0;
     top: calc(100% + 0.75rem);
-		width: min(18rem, calc(100vw - 2.5rem));
+		width: min(20rem, calc(100vw - (var(--df-section-x) * 2)));
     padding: 1rem;
     border: 1px solid rgb(255 255 255 / 10%);
     background: rgb(5 5 6 / 84%);
@@ -260,9 +281,9 @@ const { logo, navigation } = siteConfig;
 
   .nav-mobile-link {
     display: block;
-    padding: 0.75rem;
+    padding: 0.85rem 0.75rem;
     color: var(--df-on-primary);
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     font-weight: 600;
     text-decoration: none;
   }
@@ -276,7 +297,8 @@ const { logo, navigation } = siteConfig;
   .nav-cta--mobile {
     display: flex;
     margin-top: 1rem;
-    padding: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
   }
 
   .nav-link:focus-visible,
@@ -288,12 +310,27 @@ const { logo, navigation } = siteConfig;
   }
 
   @media (min-width: 640px) {
+    .nav-logo-img {
+      width: 13rem;
+    }
+  }
+
+  @media (max-width: 420px) {
     .nav-container {
-      padding-inline: 2rem;
+      gap: 0.5rem;
     }
 
     .nav-logo-img {
-      width: clamp(12rem, 24vw, 14rem) !important;
+      width: clamp(7.5rem, 32vw, 8.75rem);
+    }
+
+    .nav-mobile-panel {
+      width: min(18rem, calc(100vw - (var(--df-section-x) * 2)));
+    }
+
+    .nav-cta--mobile {
+      font-size: 0.95rem;
+      padding-inline: 0.9rem;
     }
   }
 
@@ -301,7 +338,7 @@ const { logo, navigation } = siteConfig;
     .nav-container {
       min-height: 5.6rem;
       gap: 1rem;
-      padding: 0.85rem 2.5rem;
+      padding: 1rem var(--df-section-x);
     }
 
     .nav-logo-img {

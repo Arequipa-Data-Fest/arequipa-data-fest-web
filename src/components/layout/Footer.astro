@@ -1,5 +1,5 @@
 ---
-import { CldImage } from "astro-cloudinary";
+import { getImagePath } from "@config/assets";
 import { siteConfig } from "@config/site";
 import { ArrowRight, MessageCircle } from "@lucide/astro";
 
@@ -38,9 +38,13 @@ const { footer } = siteConfig;
       </div>
     </section>
 
-    <CldImage
+    <img
       class="footer-network"
-      src={footer.networkPublicId}
+      src={getImagePath(footer.networkPublicId, {
+        width: 860,
+        height: 860,
+        crop: "fit",
+      })}
       alt=""
       width={860}
       height={860}
@@ -64,15 +68,16 @@ const { footer } = siteConfig;
   }
   .footer-content {
     position: relative;
-    min-height: clamp(18rem, 28vw, 22rem);
-    padding: clamp(2.5rem, 4vw, 3.5rem) clamp(1.25rem, 5vw, 4rem)
-      clamp(1.25rem, 3vw, 1.75rem);
+    min-height: 28rem;
+    display: grid;
+    align-items: start;
+    padding: var(--df-section-y) var(--df-section-x) 2rem;
   }
   .footer-info {
     position: relative;
     z-index: 2;
     max-width: none;
-    width: min(58%, 42rem);
+    width: min(100%, 48rem);
     min-width: 0;
   }
   .footer-info h2 {
@@ -95,13 +100,14 @@ const { footer } = siteConfig;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 3.15rem;
-    padding: 0.75rem 1.45rem;
-    font-size: 1rem;
+    min-height: var(--df-touch-target);
+    padding: 0.9rem 1.35rem;
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.2rem);
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 0;
 		max-inline-size: 100%;
+		white-space: nowrap;
 		text-align: center;
   }
   .footer-button--primary {
@@ -134,19 +140,20 @@ const { footer } = siteConfig;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1;
-    width: min(42rem, 48vw) !important;
+    width: min(54rem, 54vw);
+    height: auto;
     max-width: none !important;
-    height: auto !important;
     max-height: none !important;
     aspect-ratio: auto !important;
     object-fit: contain !important;
     pointer-events: none;
+    animation: footerDrift 14s ease-in-out infinite alternate;
   }
   .footer-copy {
     position: relative;
     z-index: 2;
     margin: 0;
-    padding: 0 2rem 1.4rem;
+    padding: 0 var(--df-section-x) 2rem;
     color: var(--df-accent);
     font-size: 0.85rem;
     font-weight: 700;
@@ -160,7 +167,7 @@ const { footer } = siteConfig;
   @media (max-width: 768px) {
     .footer-content {
       min-height: auto;
-      padding: 2.5rem 1.25rem 8.5rem;
+      padding: var(--df-section-y) var(--df-section-x) 11rem;
     }
     .footer-actions {
       flex-direction: column;
@@ -173,15 +180,20 @@ const { footer } = siteConfig;
       width: 100%;
     }
     .footer-network {
-      right: 0;
-      bottom: 1.25rem;
+      right: -11rem;
+      bottom: 2rem;
       top: auto;
+      width: min(40rem, 125vw);
+      opacity: 0.7;
       transform: none;
-      width: min(34rem, 118vw) !important;
-      opacity: 0.52;
+      animation: none;
     }
-    .footer-copy {
-      padding-inline: 1.25rem;
+  }
+
+  @media (max-width: 420px) {
+    .footer-button {
+      font-size: 0.95rem;
+      padding-inline: 1rem;
     }
   }
 
@@ -202,6 +214,16 @@ const { footer } = siteConfig;
 
     .footer-button {
       font-size: 1.2rem;
+    }
+  }
+
+  @keyframes footerDrift {
+    0% {
+      transform: translateY(-50%) translateX(0);
+    }
+
+    100% {
+      transform: translateY(calc(-50% - 0.5rem)) translateX(-0.75rem);
     }
   }
 </style>

@@ -50,7 +50,7 @@ const speakers = await getEntries(speakersRefs);
 <style>
 	.featured-speakers {
 		background: var(--df-page);
-		padding: 4rem 3.5rem;
+		padding: var(--df-section-y) var(--df-section-x);
 	}
 
 	.featured-speakers__content {
@@ -69,7 +69,8 @@ const speakers = await getEntries(speakersRefs);
 
 	.featured-speakers__heading {
 		display: flex;
-		align-items: end;
+		flex-direction: column;
+		align-items: flex-start;
 		justify-content: space-between;
 		gap: 1.5rem;
 		margin-top: 0.75rem;
@@ -93,7 +94,7 @@ const speakers = await getEntries(speakersRefs);
 		align-items: center;
 		gap: 0.5rem;
 		color: var(--df-accent);
-		font-size: var(--df-text-body);
+		font-size: clamp(1rem, 0.95rem + 0.2vw, var(--df-text-body));
 		font-weight: 700;
 		text-decoration: none;
 	}
@@ -125,18 +126,17 @@ const speakers = await getEntries(speakersRefs);
 		min-width: 0;
 	}
 
-	@media (max-width: 900px) {
-		.featured-speakers {
-			padding-inline: 1.25rem;
-		}
-
-	}
-
 	@media (max-width: 560px) {
 		.featured-speakers__heading {
 			align-items: flex-start;
 			flex-direction: column;
 		}
+	}
 
+	@media (min-width: 768px) {
+		.featured-speakers__heading {
+			flex-direction: row;
+			align-items: end;
+		}
 	}
 </style>

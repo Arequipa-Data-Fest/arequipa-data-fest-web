@@ -1,5 +1,5 @@
 ---
-import { CldImage } from 'astro-cloudinary';
+import { getImagePath } from '@config/assets';
 
 interface Tag {
 	label: string;
@@ -16,6 +16,7 @@ interface Props {
 	badge?: string;
 	tags?: Tag[];
 	accent: 'primary' | 'accent';
+	priority?: boolean;
 }
 
 const {
@@ -29,6 +30,7 @@ const {
 	badge,
 	tags = [],
 	accent,
+	priority = false,
 } = Astro.props;
 
 const dimensions = {
@@ -43,14 +45,19 @@ const height = dimensions[variant].height;
 
 {variant === 'compact' && (
 	<article class:list={['speaker-card-compact', `speaker-card-compact--${accent}`]}>
-		<CldImage
-			src={imageFilename}
+		<img
+			src={getImagePath(imageFilename, {
+				width,
+				height,
+				crop: 'fill',
+				gravity: 'auto',
+			})}
 			alt={imageAlt}
 			width={width}
 			height={height}
-			crop="fill"
-			gravity="auto"
-			loading="lazy"
+			loading={priority ? 'eager' : 'lazy'}
+			fetchpriority={priority ? 'high' : 'auto'}
+			decoding="async"
 		/>
 		<div class="speaker-card-compact__details">
 			{tags[0] && <span>{tags[0].label}</span>}
@@ -63,13 +70,19 @@ const height = dimensions[variant].height;
 {variant === 'expanded' && (
 	<article class:list={['speaker-card-expanded', `speaker-card-expanded--${accent}`]}>
 		<div class="speaker-card-expanded__image">
-			<CldImage
-				src={imageFilename}
+			<img
+				src={getImagePath(imageFilename, {
+					width,
+					height,
+					crop: 'fill',
+					gravity: 'face',
+				})}
 				alt={imageAlt}
 				width={width}
 				height={height}
-				crop={{ type: 'fill', gravity: 'face', source: true }}
-				loading="lazy"
+				loading={priority ? 'eager' : 'lazy'}
+				fetchpriority={priority ? 'high' : 'auto'}
+				decoding="async"
 			/>
 		</div>
 		<div class="speaker-card-expanded__body">
@@ -87,13 +100,19 @@ const height = dimensions[variant].height;
 {variant === 'featured' && (
 	<article class:list={['speaker-card-featured', `speaker-card-featured--${accent}`]}>
 		<div class="speaker-card-featured__image">
-			<CldImage
-				src={imageFilename}
+			<img
+				src={getImagePath(imageFilename, {
+					width,
+					height,
+					crop: 'fill',
+					gravity: 'face',
+				})}
 				alt={imageAlt}
 				width={width}
 				height={height}
-				crop={{ type: 'fill', gravity: 'face', source: true }}
-				loading="lazy"
+				loading={priority ? 'eager' : 'lazy'}
+				fetchpriority={priority ? 'high' : 'auto'}
+				decoding="async"
 			/>
 		</div>
 		<div class="speaker-card-featured__content">
@@ -112,41 +131,41 @@ const height = dimensions[variant].height;
 
 <style>
 	/* Compact Styles (v1) */
-	.speaker-card-compact { position: relative; display: grid; min-width: 0; min-height: 16rem; aspect-ratio: 1 / 1; overflow: hidden; align-items: end; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.3rem; background: var(--df-card); }
+	.speaker-card-compact { position: relative; display: grid; width: 100%; min-width: 0; min-height: 14rem; aspect-ratio: 1 / 1; overflow: hidden; align-items: end; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.3rem; background: var(--df-card); }
 	.speaker-card-compact--primary { --speaker-card-accent: var(--df-primary); }
 	.speaker-card-compact--accent { --speaker-card-accent: var(--df-accent); }
 	.speaker-card-compact::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, var(--df-page), transparent 65%); pointer-events: none; }
 	.speaker-card-compact img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
-	.speaker-card-compact__details { position: relative; z-index: 2; min-width: 0; padding: 1.2rem; }
+	.speaker-card-compact__details { position: relative; z-index: 2; min-width: 0; padding: 1rem; }
 	.speaker-card-compact__details span { display: inline-flex; margin-bottom: 0.6rem; padding: 0.25rem 0.5rem; background: color-mix(in srgb, var(--df-page) 75%, transparent); color: var(--speaker-card-accent); font-size: var(--df-text-label); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 	.speaker-card-compact__details h3 { margin: 0; color: var(--df-text); font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 800; line-height: 1.2; }
 	.speaker-card-compact__details p { margin: 0.35rem 0 0; color: var(--df-text-muted); font-size: var(--df-text-body); }
 
 	/* Expanded Styles (v2) */
-	.speaker-card-expanded { min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.35rem; background: var(--df-card); }
+	.speaker-card-expanded { width: 100%; min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.35rem; background: var(--df-card); }
 	.speaker-card-expanded--primary { --speaker-card-accent: var(--df-primary); }
 	.speaker-card-expanded--accent { --speaker-card-accent: var(--df-accent); }
 	.speaker-card-expanded__image { position: relative; aspect-ratio: 1 / 1; overflow: hidden; }
 	.speaker-card-expanded__image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--df-page), transparent 45%); pointer-events: none; }
 	.speaker-card-expanded__image img { display: block; width: 100%; height: 100%; object-fit: cover; }
-	.speaker-card-expanded__body { padding: 1.5rem; background: var(--df-page); }
-	.speaker-card-expanded__body h3 { margin: 0; color: var(--df-text); font-size: clamp(2rem, 4vw, 2.7rem); font-weight: 800; line-height: 1.25; }
+	.speaker-card-expanded__body { padding: clamp(1.1rem, 2vw, 1.5rem); background: var(--df-page); }
+	.speaker-card-expanded__body h3 { margin: 0; color: var(--df-text); font-size: clamp(1.5rem, 4vw, 2.7rem); font-weight: 800; line-height: 1.2; }
 	.speaker-card-expanded__body > p { margin: 1rem 0 0; color: var(--speaker-card-accent); font-size: var(--df-text-body); font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; }
 	.speaker-card-expanded__tags { display: flex; flex-wrap: wrap; gap: 0.65rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
 	.speaker-card-expanded__tags li { border: 1px solid var(--df-line); padding: 0.45rem 0.85rem; color: var(--df-text-muted); font-size: var(--df-text-label); font-weight: 700; }
 
 	/* Featured Styles (v3) */
-	.speaker-card-featured { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); background: var(--df-page); }
+	.speaker-card-featured { display: grid; grid-template-columns: 1fr; width: 100%; min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); background: var(--df-page); }
 	.speaker-card-featured--primary { --speaker-card-accent: var(--df-primary); }
 	.speaker-card-featured--accent { --speaker-card-accent: var(--df-accent); }
-	.speaker-card-featured__image { min-height: 28rem; overflow: hidden; background: var(--df-card); }
+	.speaker-card-featured__image { min-height: clamp(18rem, 55vw, 28rem); overflow: hidden; background: var(--df-card); }
 	.speaker-card-featured__image img { display: block; width: 100%; height: 100%; object-fit: cover; }
-	.speaker-card-featured__content { display: flex; min-width: 0; flex-direction: column; justify-content: center; padding: 3rem; }
+	.speaker-card-featured__content { display: flex; min-width: 0; flex-direction: column; justify-content: center; padding: clamp(1.25rem, 3vw, 3rem); }
 	.speaker-card-featured__badge { width: fit-content; margin-bottom: 1.5rem; border: 1px solid var(--speaker-card-accent); border-radius: 999px; background: color-mix(in srgb, var(--speaker-card-accent) 18%, transparent); color: var(--speaker-card-accent); padding: 0.4rem 1rem; font-size: var(--df-text-label); font-weight: 800; letter-spacing: 0.12em; }
 	.speaker-card-featured h3 { margin: 0; color: var(--df-text); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 900; line-height: 1.15; }
 	.speaker-card-featured__role { margin: 1.25rem 0 0; color: var(--speaker-card-accent); font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 700; }
-	.speaker-card-featured__description { max-width: 26rem; margin: 2rem 0 0; color: var(--df-text-muted); font-size: var(--df-text-body); line-height: 1.5; }
+	.speaker-card-featured__description { max-width: 26rem; margin: 1.25rem 0 0; color: var(--df-text-muted); font-size: var(--df-text-body); line-height: 1.5; }
 	.speaker-card-featured__tags { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 2rem 0 0; padding: 0; list-style: none; }
 	.speaker-card-featured__tags li { border: 1px solid var(--df-line); background: var(--df-card); color: var(--df-text-muted); padding: 0.45rem 0.85rem; font-size: var(--df-text-label); font-weight: 800; letter-spacing: 0.06em; }
-	@media (max-width: 760px) { .speaker-card-featured { grid-template-columns: 1fr; } .speaker-card-featured__image { min-height: 22rem; } .speaker-card-featured__content { padding: 2rem; } }
+	@media (min-width: 760px) { .speaker-card-featured { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 </style>
