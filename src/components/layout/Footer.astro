@@ -66,13 +66,15 @@ const { footer, logo } = siteConfig;
   .footer-content {
     position: relative;
     min-height: 28rem;
-    padding: 4rem clamp(1.25rem, 5vw, 4rem) 2rem;
+    display: grid;
+    align-items: start;
+    padding: var(--df-section-y) var(--df-section-x) 2rem;
   }
   .footer-info {
     position: relative;
     z-index: 2;
     max-width: none;
-    width: min(60%, 48rem);
+    width: min(100%, 48rem);
     min-width: 0;
   }
   .footer-info h2 {
@@ -95,13 +97,14 @@ const { footer, logo } = siteConfig;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 3.6rem;
-    padding: 0.9rem 2rem;
-    font-size: 1.5rem;
+    min-height: var(--df-touch-target);
+    padding: 0.9rem 1.35rem;
+    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.2rem);
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 0.03em;
 		max-inline-size: 100%;
+		white-space: nowrap;
 		text-align: center;
   }
   .footer-button--primary {
@@ -129,7 +132,7 @@ const { footer, logo } = siteConfig;
     right: -4rem;
     top: 1rem;
     z-index: 1;
-    width: min(54rem, 60vw);
+    width: min(54rem, 54vw);
     height: auto;
     pointer-events: none;
     object-fit: contain;
@@ -138,7 +141,7 @@ const { footer, logo } = siteConfig;
     position: relative;
     z-index: 2;
     margin: 0;
-    padding: 0 2rem 2rem;
+    padding: 0 var(--df-section-x) 2rem;
     color: var(--df-accent);
     font-size: 0.95rem;
     font-weight: 700;
@@ -152,7 +155,7 @@ const { footer, logo } = siteConfig;
   @media (max-width: 768px) {
     .footer-content {
       min-height: auto;
-      padding: 3rem 1.25rem 12rem;
+      padding: var(--df-section-y) var(--df-section-x) 11rem;
     }
     .footer-actions {
       flex-direction: column;
@@ -165,13 +168,18 @@ const { footer, logo } = siteConfig;
       width: 100%;
     }
     .footer-network {
-      right: -8rem;
-      bottom: 4rem;
-      width: 42rem;
+      right: -11rem;
+      bottom: 2rem;
+      top: auto;
+      width: min(40rem, 125vw);
       opacity: 0.7;
     }
-    .footer-copy {
-      padding-inline: 1.25rem;
+  }
+
+  @media (max-width: 420px) {
+    .footer-button {
+      font-size: 0.95rem;
+      padding-inline: 1rem;
     }
   }
 </style>
