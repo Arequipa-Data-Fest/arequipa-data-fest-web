@@ -19,15 +19,6 @@ const isExternalGroup = informativeGroupHref.startsWith("http");
 ---
 
 <section class="hero" aria-labelledby="landing-title">
-	<CldImage
-		class="hero__logo-bg"
-		src="branding/logo-hero"
-		alt=""
-		width={960}
-		height={960}
-		loading="eager"
-	/>
-
 	<div class="hero__copy">
 		<h1 id="landing-title" class="hero__title">
 			<span>{hero.titlePrefix}</span>
@@ -89,6 +80,16 @@ const isExternalGroup = informativeGroupHref.startsWith("http");
 			</a>
 		</div>
 	</div>
+
+	<CldImage
+		class="hero__logo-bg"
+		src="branding/logo-hero"
+		alt=""
+		width={600}
+		height={600}
+		crop={{ type: 'fit', source: true }}
+		loading="eager"
+	/>
 </section>
 
 <style>
@@ -121,8 +122,12 @@ const isExternalGroup = informativeGroupHref.startsWith("http");
 		z-index: 1;
 		justify-self: center;
 		align-self: center;
-		width: min(48rem, 48vw);
-		height: auto;
+		width: min(100%, 40rem) !important;
+		max-width: none !important;
+		height: auto !important;
+		max-height: none !important;
+		aspect-ratio: auto !important;
+		object-fit: contain !important;
 		opacity: 0.95;
 		pointer-events: none;
 	}

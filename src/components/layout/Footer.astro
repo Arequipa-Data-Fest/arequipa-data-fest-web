@@ -36,15 +36,6 @@ const { footer, logo } = siteConfig;
           <MessageCircle class="footer-button__icon" aria-hidden="true" />
         </a>
       </div>
-
-      <CldImage
-        class="footer-logo"
-        src={siteConfig.logoPublicId}
-        alt={logo.alt}
-        width={logo.width}
-        height={logo.height}
-        loading="lazy"
-      />
     </section>
 
     <CldImage
@@ -53,7 +44,6 @@ const { footer, logo } = siteConfig;
       alt=""
       width={860}
       height={860}
-      crop={{ type: 'fit', source: true }}
       loading="lazy"
     />
   </div>
@@ -124,19 +114,27 @@ const { footer, logo } = siteConfig;
   }
   .footer-logo {
     display: block;
-    width: min(28rem, 90vw);
-    height: auto;
+    width: min(28rem, 90vw) !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    object-fit: contain !important;
     margin-top: 2rem;
   }
   .footer-network {
     position: absolute;
-    right: -4rem;
-    top: 1rem;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 1;
-    width: min(54rem, 60vw);
-    height: auto;
+    width: min(54rem, 60vw) !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    object-fit: contain !important;
     pointer-events: none;
-    object-fit: contain;
   }
   .footer-copy {
     position: relative;
@@ -169,9 +167,11 @@ const { footer, logo } = siteConfig;
       width: 100%;
     }
     .footer-network {
-      right: -8rem;
-      bottom: 4rem;
-      width: 42rem;
+      right: 0;
+      bottom: 2rem;
+      top: auto;
+      transform: none;
+      width: 42rem !important;
       opacity: 0.7;
     }
     .footer-copy {

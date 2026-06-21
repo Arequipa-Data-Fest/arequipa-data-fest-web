@@ -15,10 +15,11 @@ const { logo, navigation } = siteConfig;
   <div class="nav-container">
     <a class="nav-logo" href="/" aria-label={logo.alt}>
       <CldImage
+        class="nav-logo-img"
         src={siteConfig.logoPublicId}
         alt={logo.alt}
-        width={logo.width}
-        height={logo.height}
+        width={449}
+        height={129}
         fetchpriority="high"
       />
     </a>
@@ -120,10 +121,14 @@ const { logo, navigation } = siteConfig;
     flex-shrink: 0;
   }
 
-  .nav-logo img {
+  .nav-logo-img {
     display: block;
-    width: 10rem;
-    height: auto;
+    width: 12rem !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+    object-fit: contain !important;
   }
 
   .nav-links {
@@ -255,8 +260,8 @@ const { logo, navigation } = siteConfig;
       padding-inline: 2rem;
     }
 
-    .nav-logo img {
-      width: 13rem;
+    .nav-logo-img {
+      width: 15rem !important;
     }
   }
 
@@ -267,8 +272,8 @@ const { logo, navigation } = siteConfig;
       padding: 1rem 2.5rem;
     }
 
-    .nav-logo img {
-      width: 18rem;
+    .nav-logo-img {
+      width: 15rem !important;
     }
   }
 </style>
