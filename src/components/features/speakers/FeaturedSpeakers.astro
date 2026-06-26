@@ -3,7 +3,6 @@ import { ArrowRight } from '@lucide/astro';
 import { getEntries } from 'astro:content';
 import SpeakerCard from './SpeakerCard.astro';
 import type { CollectionEntry } from 'astro:content';
-import { Linkedin, Twitter } from '@lucide/astro';
 
 interface Props {
 	featuredSpeakers: CollectionEntry<'landing'>['data']['featuredSpeakers'];
@@ -33,6 +32,8 @@ const speakers = await getEntries(speakersRefs);
 			{speakers.map((speaker, index) => (
 				<li>
 					<SpeakerCard
+						href={`/speakers/${speaker.id}/`}
+						speakerId={speaker.id}
 						variant="compact"
 						name={speaker.data.name}
 						role={speaker.data.role}

@@ -1,12 +1,13 @@
 ---
 import { CldImage } from 'astro-cloudinary';
-import { Linkedin, Twitter } from '@lucide/astro';
 
 interface Tag {
 	label: string;
 }
 
 interface Props {
+	href: string;
+	speakerId: string;
 	variant: 'compact' | 'expanded' | 'featured';
 	name: string;
 	role: string;
@@ -17,11 +18,13 @@ interface Props {
 	badge?: string;
 	tags?: Tag[];
 	accent: 'primary' | 'accent';
-	social?: { linkedin?: string; twitter?: string };
+	social?: { linkedin?: string; twitter?: string; website?: string };
 	isRevealed?: boolean;
 }
 
 const {
+	href,
+	speakerId,
 	variant,
 	name,
 	role,
@@ -32,8 +35,7 @@ const {
 	badge,
 	tags = [],
 	accent,
-  social,
-  isRevealed = false,
+	isRevealed = false,
 } = Astro.props;
 
 const dimensions = {
@@ -45,34 +47,41 @@ const dimensions = {
 const width = dimensions[variant].width;
 const height = dimensions[variant].height;
 
-const displayImage = isRevealed ? imageFilename : "speakers/incognito-placeholder";
-const displayName = isRevealed ? name : "Pronto";
-const displayRole = isRevealed ? role : "Speaker Invitado";
+const displayImage = isRevealed ? imageFilename : 'speakers/incognito-placeholder';
+const displayName = isRevealed ? name : 'Pronto';
+const displayRole = isRevealed ? role : 'Speaker Invitado';
+const transitionName = `speaker-hero-wrap-${speakerId}`;
+const cardAriaLabel = isRevealed ? `Ver perfil de ${name}` : 'Ver perfil de ponente por revelar';
+const compactClass = `speaker-card-compact speaker-card-compact--${accent}`;
+const expandedClass = `speaker-card-expanded speaker-card-expanded--${accent}`;
+const featuredClass = `speaker-card-featured speaker-card-featured--${accent}`;
 ---
 
 {variant === 'compact' && (
-	<article class:list={['speaker-card-compact', `speaker-card-compact--${accent}`]}>
-		<CldImage
-			src={imageFilename}
-			alt={imageAlt}
-			width={width}
-			height={height}
-			crop="fill"
-			gravity="auto"
-			loading="lazy"
-		/>
+	<a href={href} aria-label={cardAriaLabel} class={compactClass}>
+		<div class="speaker-card-compact__image" transition:name={transitionName}>
+			<CldImage
+				src={displayImage}
+				alt={imageAlt}
+				width={width}
+				height={height}
+				crop="fill"
+				gravity="auto"
+				loading="lazy"
+			/>
+		</div>
 		<div class="speaker-card-compact__details">
 			{isRevealed && tags[0] && <span>{tags[0].label}</span>}
 			<h3>{displayName}</h3>
 		</div>
-	</article>
+	</a>
 )}
 
 {variant === 'expanded' && (
-	<article class:list={['speaker-card-expanded', `speaker-card-expanded--${accent}`]}>
-		<div class="speaker-card-expanded__image">
+	<a href={href} aria-label={cardAriaLabel} class={expandedClass}>
+		<div class="speaker-card-expanded__image" transition:name={transitionName}>
 			<CldImage
-				src={imageFilename}
+				src={displayImage}
 				alt={imageAlt}
 				width={width}
 				height={height}
@@ -89,14 +98,14 @@ const displayRole = isRevealed ? role : "Speaker Invitado";
 				</ul>
 			)}
 		</div>
-	</article>
+	</a>
 )}
 
 {variant === 'featured' && (
-	<article class:list={['speaker-card-featured', `speaker-card-featured--${accent}`]}>
-		<div class="speaker-card-featured__image">
+	<a href={href} aria-label={cardAriaLabel} class={featuredClass}>
+		<div class="speaker-card-featured__image" transition:name={transitionName}>
 			<CldImage
-				src={imageFilename}
+				src={displayImage}
 				alt={imageAlt}
 				width={width}
 				height={height}
@@ -115,15 +124,16 @@ const displayRole = isRevealed ? role : "Speaker Invitado";
 				</ul>
 			)}
 		</div>
-	</article>
+	</a>
 )}
 
 <style>
 	/* Compact Styles (v1) */
-	.speaker-card-compact { position: relative; display: grid; min-width: 0; min-height: 16rem; aspect-ratio: 1414 / 2000; overflow: hidden; align-items: end; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.3rem; background: var(--df-card); }
+	.speaker-card-compact { position: relative; display: grid; min-width: 0; min-height: 16rem; aspect-ratio: 1414 / 2000; overflow: hidden; align-items: end; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.3rem; background: var(--df-card); color: inherit; text-decoration: none; }
 	.speaker-card-compact--primary { --speaker-card-accent: var(--df-primary); }
 	.speaker-card-compact--accent { --speaker-card-accent: var(--df-accent); }
 	.speaker-card-compact::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, var(--df-page), transparent 65%); pointer-events: none; }
+	.speaker-card-compact__image { position: absolute; inset: 0; }
 	.speaker-card-compact img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 	.speaker-card-compact__details { position: relative; z-index: 2; min-width: 0; padding: 1.2rem; }
 	.speaker-card-compact__details span { display: inline-flex; margin-bottom: 0.6rem; padding: 0.25rem 0.5rem; background: color-mix(in srgb, var(--df-page) 75%, transparent); color: var(--speaker-card-accent); font-size: var(--df-text-label); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -131,7 +141,7 @@ const displayRole = isRevealed ? role : "Speaker Invitado";
 	.speaker-card-compact__details p { margin: 0.35rem 0 0; color: var(--df-text-muted); font-size: var(--df-text-body); }
 
 	/* Expanded Styles (v2) */
-	.speaker-card-expanded { display: flex; flex-direction: column; min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.35rem; background: var(--df-card); }
+	.speaker-card-expanded { display: flex; flex-direction: column; min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); border-radius: 0.35rem; background: var(--df-card); color: inherit; text-decoration: none; }
 	.speaker-card-expanded--primary { --speaker-card-accent: var(--df-primary); }
 	.speaker-card-expanded--accent { --speaker-card-accent: var(--df-accent); }
 	.speaker-card-expanded__image { position: relative; aspect-ratio: 1414 / 2000; overflow: hidden; }
@@ -144,7 +154,7 @@ const displayRole = isRevealed ? role : "Speaker Invitado";
 	.speaker-card-expanded__tags li { border: 1px solid var(--df-line); padding: 0.45rem 0.85rem; color: var(--df-text-muted); font-size: var(--df-text-label); font-weight: 700; }
 
 	/* Featured Styles (v3) */
-	.speaker-card-featured { display: flex; flex-direction: column; min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); background: var(--df-page); }
+	.speaker-card-featured { display: flex; flex-direction: column; min-width: 0; height: 100%; border: 1px solid color-mix(in srgb, var(--speaker-card-accent) 55%, var(--df-line)); background: var(--df-page); color: inherit; text-decoration: none; }
 	.speaker-card-featured--primary { --speaker-card-accent: var(--df-primary); }
 	.speaker-card-featured--accent { --speaker-card-accent: var(--df-accent); }
 	.speaker-card-featured__image { aspect-ratio: 1414 / 2000; overflow: hidden; background: var(--df-card); }

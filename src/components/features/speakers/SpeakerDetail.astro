@@ -1,0 +1,419 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { CldImage } from 'astro-cloudinary';
+import { ArrowLeft, Globe } from '@lucide/astro';
+
+interface AgendaItem {
+	time: string;
+	role?: string;
+	speaker?: string;
+	title: string;
+	type: 'session' | 'break';
+}
+
+interface Props {
+	speaker: CollectionEntry<'speakers'>;
+	agendaItems: AgendaItem[];
+}
+
+const { speaker, agendaItems } = Astro.props;
+const { data } = speaker;
+const isRevealed = data.isRevealed;
+
+const displayName = isRevealed ? data.name : 'Ponente por revelar';
+const displayRole = isRevealed ? data.role : 'Speaker invitado';
+const displayImage = isRevealed ? data.imageFilename : 'speakers/incognito-placeholder';
+const companyLabel = isRevealed && data.company ? data.company : undefined;
+const transitionName = `speaker-hero-wrap-${speaker.id}`;
+
+const agendaSessions = agendaItems.filter((item) => item.type === 'session');
+const talks = data.talks;
+
+const hasSocialLinks = Boolean(data.social?.linkedin || data.social?.twitter || data.social?.website);
+---
+
+<section class="speaker-detail" aria-labelledby="speaker-detail-title">
+	<div class="speaker-detail__content">
+		<a class="speaker-detail__back" href="/speakers">
+			<ArrowLeft aria-hidden="true" />
+			Volver a ponentes
+		</a>
+
+		<div class="speaker-detail__hero">
+			<div class="speaker-detail__media" transition:name={transitionName}>
+				<CldImage
+					src={displayImage}
+					alt={isRevealed ? data.imageAlt : 'Ponente por revelar'}
+					width={900}
+					height={1100}
+					crop={{ type: 'fill', gravity: 'face', source: true }}
+					loading="eager"
+				/>
+			</div>
+
+			<div class="speaker-detail__summary">
+				{isRevealed && data.badge && <span class="speaker-detail__badge">{data.badge}</span>}
+				<p class="speaker-detail__eyebrow">Speaker</p>
+				<h1 id="speaker-detail-title">{displayName}</h1>
+				<p class="speaker-detail__role">
+					{displayRole}
+					{companyLabel && <span> en {companyLabel}</span>}
+				</p>
+
+				{isRevealed && data.tags.length > 0 && (
+					<ul class="speaker-detail__tags" aria-label="Especialidades">
+						{data.tags.map((tag) => <li>{tag.label}</li>)}
+					</ul>
+				)}
+
+				{isRevealed && hasSocialLinks && (
+					<nav class="speaker-detail__social" aria-label={`Redes sociales de ${data.name}`}>
+						{data.social?.linkedin && (
+							<a href={data.social.linkedin} target="_blank" rel="noopener noreferrer">
+								<span aria-hidden="true">in</span>
+								LinkedIn
+							</a>
+						)}
+						{data.social?.twitter && (
+							<a href={data.social.twitter} target="_blank" rel="noopener noreferrer">
+								<span aria-hidden="true">X</span>
+								Twitter
+							</a>
+						)}
+						{data.social?.website && (
+							<a href={data.social.website} target="_blank" rel="noopener noreferrer">
+								<Globe aria-hidden="true" />
+								Web
+							</a>
+						)}
+					</nav>
+				)}
+			</div>
+		</div>
+
+		<div class="speaker-detail__grid">
+			<article class="speaker-detail__card speaker-detail__card--bio">
+				<h2>Biografía</h2>
+				<div class="speaker-detail__bio">
+					<slot />
+				</div>
+			</article>
+
+			<article class="speaker-detail__card">
+				<h2>Temas de charla</h2>
+				{isRevealed && talks.length > 0 && (
+					<ul class="speaker-detail__talks">
+						{talks.map((talk) => (
+							<li>
+								{talk.time && <time>{talk.time}</time>}
+								<strong>{talk.title}</strong>
+								{talk.description && <p>{talk.description}</p>}
+							</li>
+						))}
+					</ul>
+				)}
+			</article>
+
+			<article class="speaker-detail__card">
+				<h2>Horario en agenda</h2>
+				{isRevealed && agendaSessions.length > 0 ? (
+					<ul class="speaker-detail__schedule">
+						{agendaSessions.map((item) => (
+							<li>
+								<time>{item.time}</time>
+								<span>{item.title}</span>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p class="speaker-detail__empty">El horario se confirmará en la agenda oficial.</p>
+				)}
+			</article>
+		</div>
+	</div>
+</section>
+
+<style>
+	.speaker-detail {
+		background: var(--df-page);
+		padding: clamp(7rem, 12vh, 9rem) 3.5rem 5rem;
+	}
+
+	.speaker-detail__content {
+		max-width: 88rem;
+		margin-inline: auto;
+	}
+
+	.speaker-detail__back {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--df-accent);
+		font-size: var(--df-text-body);
+		font-weight: 800;
+		text-decoration: none;
+	}
+
+	.speaker-detail__back:hover {
+		color: var(--df-accent-soft);
+	}
+
+	.speaker-detail__back svg,
+	.speaker-detail__social svg,
+	.speaker-detail__social span {
+		width: 1.1rem;
+		height: 1.1rem;
+		flex: 0 0 auto;
+	}
+
+	.speaker-detail__social span {
+		display: inline-grid;
+		place-items: center;
+		font-weight: 900;
+		line-height: 1;
+	}
+
+	.speaker-detail__hero {
+		display: grid;
+		grid-template-columns: minmax(18rem, 0.85fr) minmax(0, 1.15fr);
+		gap: clamp(2rem, 5vw, 5rem);
+		align-items: center;
+		margin-top: 2.5rem;
+	}
+
+	.speaker-detail__media {
+		position: relative;
+		overflow: hidden;
+		aspect-ratio: 9 / 11;
+		border: 1px solid color-mix(in srgb, var(--df-primary) 55%, var(--df-line));
+		border-radius: 0.45rem;
+		background: var(--df-card);
+		box-shadow: 0 0 2rem color-mix(in srgb, var(--df-primary) 18%, transparent);
+	}
+
+	.speaker-detail__media::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to top, var(--df-page), transparent 48%);
+		pointer-events: none;
+	}
+
+	.speaker-detail__media img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.speaker-detail__summary {
+		min-width: 0;
+	}
+
+	.speaker-detail__badge,
+	.speaker-detail__eyebrow {
+		display: inline-flex;
+		width: fit-content;
+		margin: 0 0 1rem;
+		border: 1px solid var(--df-accent);
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--df-accent) 12%, transparent);
+		color: var(--df-accent);
+		padding: 0.45rem 1rem;
+		font-size: var(--df-text-label);
+		font-weight: 900;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+	}
+
+	.speaker-detail__badge {
+		border-color: var(--df-primary);
+		background: color-mix(in srgb, var(--df-primary) 18%, transparent);
+		color: var(--df-accent-soft);
+	}
+
+	.speaker-detail h1 {
+		margin: 0;
+		background: linear-gradient(90deg, var(--df-primary), var(--df-accent));
+		background-clip: text;
+		-webkit-background-clip: text;
+		color: transparent;
+		font-size: clamp(3rem, 9vw, 7rem);
+		font-weight: 900;
+		letter-spacing: -0.04em;
+		line-height: 0.95;
+		text-transform: uppercase;
+	}
+
+	.speaker-detail__role {
+		margin: 1.5rem 0 0;
+		color: var(--df-text);
+		font-size: clamp(1.25rem, 2.5vw, 2rem);
+		font-weight: 800;
+		line-height: 1.25;
+	}
+
+	.speaker-detail__role span {
+		color: var(--df-accent);
+	}
+
+	.speaker-detail__tags,
+	.speaker-detail__talks,
+	.speaker-detail__schedule {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.speaker-detail__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 2rem;
+	}
+
+	.speaker-detail__tags li {
+		border: 1px solid var(--df-line);
+		background: var(--df-card);
+		color: var(--df-text-muted);
+		padding: 0.5rem 0.9rem;
+		font-size: var(--df-text-label);
+		font-weight: 800;
+	}
+
+	.speaker-detail__social {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem;
+		margin-top: 2rem;
+	}
+
+	.speaker-detail__social a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		border: 1px solid var(--df-accent);
+		color: var(--df-accent);
+		padding: 0.7rem 1rem;
+		font-size: var(--df-text-label);
+		font-weight: 800;
+		text-decoration: none;
+	}
+
+	.speaker-detail__social a:hover {
+		background: color-mix(in srgb, var(--df-accent) 10%, transparent);
+	}
+
+	.speaker-detail__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+		gap: 1.5rem;
+		margin-top: 4rem;
+	}
+
+	.speaker-detail__card {
+		min-width: 0;
+		border: 1px solid color-mix(in srgb, var(--df-accent) 45%, var(--df-line));
+		border-radius: 0.45rem;
+		background: var(--df-card);
+		padding: clamp(1.5rem, 3vw, 2.5rem);
+	}
+
+	.speaker-detail__card--bio {
+		grid-row: span 2;
+	}
+
+	.speaker-detail__card h2 {
+		margin: 0 0 1.5rem;
+		color: var(--df-accent);
+		font-size: clamp(1.4rem, 3vw, 2rem);
+		font-weight: 900;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.speaker-detail__bio :global(p),
+	.speaker-detail__empty,
+	.speaker-detail__talks p {
+		color: var(--df-text-muted);
+		font-size: var(--df-text-body);
+		line-height: 1.65;
+	}
+
+	.speaker-detail__bio :global(p) {
+		margin: 0 0 1rem;
+	}
+
+	.speaker-detail__bio :global(p:last-child) {
+		margin-bottom: 0;
+	}
+
+	.speaker-detail__empty {
+		margin: 0;
+	}
+
+	.speaker-detail__talks,
+	.speaker-detail__schedule {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.speaker-detail__talks li,
+	.speaker-detail__schedule li {
+		min-width: 0;
+		border-left: 3px solid var(--df-primary);
+		background: color-mix(in srgb, var(--df-page) 72%, var(--df-card));
+		padding: 1rem;
+	}
+
+	.speaker-detail__talks time,
+	.speaker-detail__schedule time {
+		display: block;
+		margin-bottom: 0.5rem;
+		color: var(--df-accent);
+		font-size: var(--df-text-label);
+		font-weight: 900;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.speaker-detail__talks strong,
+	.speaker-detail__schedule span {
+		display: block;
+		color: var(--df-text);
+		font-size: var(--df-text-body);
+		font-weight: 800;
+		line-height: 1.35;
+	}
+
+	.speaker-detail__talks p {
+		margin: 0.75rem 0 0;
+		font-size: var(--df-text-label);
+	}
+
+	@media (max-width: 900px) {
+		.speaker-detail {
+			padding-inline: 1.25rem;
+		}
+
+		.speaker-detail__hero,
+		.speaker-detail__grid {
+			grid-template-columns: 1fr;
+		}
+
+		.speaker-detail__card--bio {
+			grid-row: auto;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.speaker-detail__hero {
+			margin-top: 1.75rem;
+		}
+
+		.speaker-detail__social a {
+			width: 100%;
+			justify-content: center;
+		}
+	}
+</style>
