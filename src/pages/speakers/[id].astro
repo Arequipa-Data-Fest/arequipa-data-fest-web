@@ -1,0 +1,70 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import MainLayout from '@layouts/MainLayout.astro';
+import SpeakerDetail from '@components/features/speakers/SpeakerDetail.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	speaker: CollectionEntry<'speakers'>;
+}
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+	const speakers = await getCollection('speakers');
+
+	return speakers.map((speaker) => ({
+		params: { id: speaker.id },
+		props: { speaker },
+	}));
+}
+
+const { speaker } = Astro.props;
+const { Content } = await render(speaker);
+const agendaEntry = await getEntry('agenda', 'home');
+
+function normalizeText(value: string) {
+	return value
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.trim();
+}
+
+function matchesSpeakerName(agendaSpeaker?: string) {
+	if (!agendaSpeaker || !speaker.data.isRevealed) return false;
+
+	const normalizedSpeaker = normalizeText(speaker.data.name);
+	const normalizedAgendaSpeaker = normalizeText(agendaSpeaker);
+
+	if (!normalizedSpeaker || !normalizedAgendaSpeaker) return false;
+	if (normalizedAgendaSpeaker === 'pronto' || normalizedSpeaker === 'incognito') return false;
+
+	return normalizedSpeaker.includes(normalizedAgendaSpeaker) || normalizedAgendaSpeaker.includes(normalizedSpeaker);
+}
+
+const agendaItems = agendaEntry?.data.items.filter((item) => matchesSpeakerName(item.speaker)) ?? [];
+const hasBiography = (speaker.body ?? '').trim().length > 0;
+const displayName = speaker.data.isRevealed ? speaker.data.name : 'Ponente por revelar';
+const pageTitle = `${displayName} | Arequipa Data Fest 2026`;
+const pageDescription =
+	speaker.data.description ??
+	(speaker.data.isRevealed
+		? `${speaker.data.name}, ${speaker.data.role}, speaker del Arequipa Data Fest 2026.`
+		: 'Perfil de speaker del Arequipa Data Fest 2026.');
+---
+
+<MainLayout title={pageTitle} description={pageDescription}>
+	<SpeakerDetail speaker={speaker} agendaItems={agendaItems}>
+		{hasBiography ? (
+			<Content />
+		) : (
+			<p>
+				{speaker.data.description ??
+					(speaker.data.isRevealed
+						? 'La biografía completa de este speaker se publicará próximamente.'
+						: 'La información completa de este speaker se publicará próximamente.')}
+			</p>
+		)}
+	</SpeakerDetail>
+</MainLayout>

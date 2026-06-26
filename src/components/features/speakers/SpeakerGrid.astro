@@ -21,15 +21,16 @@ function mapVariant(v: string) {
 		const data = speaker.data;
 		const accent = index % 2 === 0 ? 'primary' : 'accent';
 		const mappedVariant = mapVariant(data.variant);
+		const href = `/speakers/${speaker.id}/`;
+		const itemClass = mappedVariant === 'featured'
+			? 'speaker-grid__item speaker-grid__item--wide'
+			: 'speaker-grid__item';
 		
 		return (
-			<li
-				class:list={[
-					'speaker-grid__item',
-					{ 'speaker-grid__item--wide': mappedVariant === 'featured' },
-				]}
-			>
+			<li class={itemClass}>
 				<SpeakerCard
+					href={href}
+					speakerId={speaker.id}
 					variant={mappedVariant}
 					name={data.name}
 					role={data.role}
@@ -40,7 +41,7 @@ function mapVariant(v: string) {
 					badge={data.badge}
 					tags={data.tags}
 					accent={accent}
-          social={data.social}
+					social={data.social}
 					isRevealed={data.isRevealed} 
 				/>
 			</li>
