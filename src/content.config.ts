@@ -15,13 +15,23 @@ const speakers = defineCollection({
     imageFilename: z.string(),
     imageAlt: z.string(),
     tags: z.array(z.object({ label: z.string() })).default([]),
+    talks: z.array(z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      time: z.string().optional(),
+    })).default([]),
     variant: z.enum(['v1', 'v2', 'v3']).default('v2'),
     description: z.string().optional(),
     badge: z.string().optional(),
     social: z.object({
-      linkedin: z.string().url().optional(),
-      twitter: z.string().url().optional(),
+      linkedin: z.url().optional(),
+      twitter: z.url().optional(),
+      website: z.url().optional(),
     }).optional(),
+    companies: z.array(z.object({
+      name: z.string(),
+      role: z.string().optional(),
+    })).default([]),
     isRevealed: z.boolean().default(false), 
   }),
 });
