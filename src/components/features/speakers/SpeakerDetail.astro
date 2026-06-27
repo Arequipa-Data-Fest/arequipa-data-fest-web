@@ -22,7 +22,6 @@ const isRevealed = data.isRevealed;
 
 const displayName = isRevealed ? data.name : 'Ponente por revelar';
 const displayRole = isRevealed ? data.role : 'Speaker invitado';
-const displayImage = isRevealed ? data.imageFilename : 'speakers/incognito-placeholder';
 const companyLabel = isRevealed && data.company ? data.company : undefined;
 const transitionName = `speaker-hero-wrap-${speaker.id}`;
 
@@ -90,7 +89,7 @@ const hasSocialLinks = Boolean(data.social?.linkedin || data.social?.twitter || 
 		<div class="speaker-detail__hero">
 			<div class="speaker-detail__media" transition:name={transitionName}>
 				<CldImage
-					src={displayImage}
+					src={data.imageFilename}
 					alt={isRevealed ? data.imageAlt : 'Ponente por revelar'}
 					width={900}
 					height={1100}
