@@ -2,24 +2,16 @@
 import { getCollection, getEntry, render } from 'astro:content';
 import MainLayout from '@layouts/MainLayout.astro';
 import SpeakerDetail from '@components/features/speakers/SpeakerDetail.astro';
-import type { CollectionEntry } from 'astro:content';
 
-interface Props {
-	speaker: CollectionEntry<'speakers'>;
+const speakerId = Astro.params.id;
+const speakers = await getCollection('speakers');
+const requestedSpeaker = speakers.find((entry) => entry.id === speakerId);
+
+if (!requestedSpeaker) {
+	return Astro.redirect('/speakers');
 }
 
-export const prerender = true;
-
-export async function getStaticPaths() {
-	const speakers = await getCollection('speakers');
-
-	return speakers.map((speaker) => ({
-		params: { id: speaker.id },
-		props: { speaker },
-	}));
-}
-
-const { speaker } = Astro.props;
+const speaker = requestedSpeaker;
 const { Content } = await render(speaker);
 const agendaEntry = await getEntry('agenda', 'home');
 

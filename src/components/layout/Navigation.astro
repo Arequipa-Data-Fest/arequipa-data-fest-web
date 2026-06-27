@@ -100,14 +100,33 @@ const { logo, navigation } = siteConfig;
 </header>
 
 <script>
-  const navigation = document.querySelector<HTMLElement>("[data-navigation]");
-  if (navigation) {
+  function setupNavigationScroll() {
+    const navigation = document.querySelector("[data-navigation]");
+    if (!(navigation instanceof HTMLElement)) return;
+
+    const navigationWindow = window as Window & {
+      __navigationScrollController?: AbortController;
+    };
+
+    navigationWindow.__navigationScrollController?.abort();
+
+    const controller = new AbortController();
+    navigationWindow.__navigationScrollController = controller;
+
     const updateNavigation = () => {
       navigation.classList.toggle("nav-shell--scrolled", window.scrollY > 8);
     };
+
     updateNavigation();
-    window.addEventListener("scroll", updateNavigation, { passive: true });
+
+    window.addEventListener("scroll", updateNavigation, {
+      passive: true,
+      signal: controller.signal,
+    });
   }
+
+  setupNavigationScroll();
+  document.addEventListener("astro:page-load", setupNavigationScroll);
 </script>
 
 <style>
